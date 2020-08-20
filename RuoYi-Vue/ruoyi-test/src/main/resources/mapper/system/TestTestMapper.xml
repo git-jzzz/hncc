@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TestTestMapper">
+    
+    <resultMap type="TestTest" id="TestTestResult">
+        <result property="uid"    column="uid"    />
+        <result property="username"    column="username"    />
+        <result property="sex"    column="sex"    />
+    </resultMap>
+
+    <sql id="selectTestTestVo">
+        select uid, username, sex from test_test
+    </sql>
+
+    <select id="selectTestTestList" parameterType="TestTest" resultMap="TestTestResult">
+        <include refid="selectTestTestVo"/>
+        <where>  
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+        </where>
+    </select>
+    
+    <select id="selectTestTestById" parameterType="Long" resultMap="TestTestResult">
+        <include refid="selectTestTestVo"/>
+        where uid = #{uid}
+    </select>
+        
+    <insert id="insertTestTest" parameterType="TestTest" useGeneratedKeys="true" keyProperty="uid">
+        insert into test_test
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null">username,</if>
+            <if test="sex != null">sex,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null">#{username},</if>
+            <if test="sex != null">#{sex},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTestTest" parameterType="TestTest">
+        update test_test
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null">username = #{username},</if>
+            <if test="sex != null">sex = #{sex},</if>
+        </trim>
+        where uid = #{uid}
+    </update>
+
+    <delete id="deleteTestTestById" parameterType="Long">
+        delete from test_test where uid = #{uid}
+    </delete>
+
+    <delete id="deleteTestTestByIds" parameterType="String">
+        delete from test_test where uid in 
+        <foreach item="uid" collection="array" open="(" separator="," close=")">
+            #{uid}
+        </foreach>
+    </delete>
+    
+</mapper>
